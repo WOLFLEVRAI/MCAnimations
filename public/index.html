@@ -1,39 +1,92 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Animation with Rotation and Resize</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Éditeur Vidéo avec Animation</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Create Your Animated Image Video</h1>
+    <header class="toolbar">
+        <button onclick="showMessage('Ajouter Clip')"><i class="fas fa-plus"></i> Ajouter Clip</button>
+        <button onclick="showMessage('Exporter Vidéo')"><i class="fas fa-file-export"></i> Exporter Vidéo</button>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar files">
+            <h2><i class="fas fa-folder"></i> Fichiers</h2>
+            <ul id="file-list">
+                <!-- Liste des fichiers ici -->
+            </ul>
+        </aside>
         
-        <!-- Sélection d'image -->
-        <label for="imageUpload">Pick an image:</label>
-        <input type="file" id="imageUpload" accept="image/*">
-        
-        <!-- Sliders pour ajuster la taille -->
-        <div class="slider-container">
-            <label for="widthSlider">Width:</label>
-            <input type="range" id="widthSlider" min="50" max="500" value="200">
+        <div class="video-preview">
+            <div class="text-preview">
+                <div id="text-content" contenteditable="true">Cliquez pour modifier ce texte</div>
+                <div id="loader" class="hidden">Chargement...</div>
+            </div>
+            <div class="preview-controls">
+                <button onclick="editVideoContent()">Modifier le Contenu</button>
+            </div>
+
+            <!-- Section pour le choix d'image et réglages -->
+            <label for="imageUpload">Choisir une image :</label>
+            <input type="file" id="imageUpload" accept="image/*">
             
-            <label for="heightSlider">Height:</label>
-            <input type="range" id="heightSlider" min="50" max="500" value="200">
+            <div class="slider-container">
+                <label for="widthSlider">Largeur :</label>
+                <input type="range" id="widthSlider" min="50" max="500" value="200">
+                <label for="heightSlider">Hauteur :</label>
+                <input type="range" id="heightSlider" min="50" max="500" value="200">
+            </div>
+
+            <button id="previewBtn">Prévisualiser l'animation</button>
+            <button id="renderBtn">Rendre la vidéo</button>
         </div>
+
+        <aside class="sidebar effects">
+            <h2><i class="fas fa-star"></i> Effets</h2>
+            <!-- Liste des effets ici -->
+        </aside>
         
-        <!-- Prévisualisation de l'animation -->
-        <div id="preview" class="preview"></div>
-        
-        <!-- Bouton pour lancer la prévisualisation de l'animation -->
-        <button id="previewBtn">Preview Animation</button>
-        
-        <!-- Bouton pour rendre la vidéo -->
-        <button id="renderBtn">Render Video</button>
+        <aside class="sidebar editor">
+            <h2><i class="fas fa-edit"></i> Éditeur</h2>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('text')">Texte</button>
+                <button class="tab-button" onclick="showTab('images')">Images</button>
+                <button class="tab-button" onclick="showTab('videos')">Vidéos</button>
+            </div>
+            <div id="editor-panel" class="tab-content text-content">
+                <div class="text-tab">
+                    <h3>Modifier le Texte</h3>
+                    <input type="text" id="text-input" placeholder="Entrez votre texte ici..." value="Cliquez pour modifier ce texte">
+                    <button onclick="applyTextChange()">Appliquer</button>
+                </div>
+                <div class="images-tab hidden">
+                    <p>Gestion des images ici.</p>
+                </div>
+                <div class="videos-tab hidden">
+                    <p>Gestion des vidéos ici.</p>
+                </div>
+            </div>
+        </aside>
     </div>
 
+    <footer class="timeline">
+        <div class="timeline-track">
+            <div class="timeline-item"></div>
+            <div class="timeline-item"></div>
+            <div class="timeline-item"></div>
+        </div>
+        <div class="timeline-time">
+            <span>00:00</span>
+            <span>00:05</span>
+            <span>00:10</span>
+        </div>
+    </footer>
+
     <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
