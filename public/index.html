@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Animation with Rotation and Resize</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Animated Image Video</h1>
+        
+        <!-- Sélection d'image -->
+        <label for="imageUpload">Pick an image:</label>
+        <input type="file" id="imageUpload" accept="image/*">
+        
+        <!-- Sliders pour ajuster la taille -->
+        <div class="slider-container">
+            <label for="widthSlider">Width:</label>
+            <input type="range" id="widthSlider" min="50" max="500" value="200">
+            
+            <label for="heightSlider">Height:</label>
+            <input type="range" id="heightSlider" min="50" max="500" value="200">
+        </div>
+        
+        <!-- Prévisualisation de l'animation -->
+        <div id="preview" class="preview"></div>
+        
+        <!-- Bouton pour lancer la prévisualisation de l'animation -->
+        <button id="previewBtn">Preview Animation</button>
+        
+        <!-- Bouton pour rendre la vidéo -->
+        <button id="renderBtn">Render Video</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
