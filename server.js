@@ -1,6 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const { exec } = require('child_process');
+const multer = require('multer');
+const path = require('path');
 const app = express();
 const PORT = 3000;
 
@@ -9,37 +11,36 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Fonction pour convertir une chaîne base64 en fichier
-function base64ToFile(base64Str, filePath) {
-    // Supprimer les préfixes de type MIME
-    const base64Data = base64Str.replace(/^data:image\/\w+;base64,/, "");
-    fs.writeFileSync(filePath, base64Data, 'base64');
-}
+// Configuration multer pour sauvegarder l'image uploadée temporairement
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+const upload = multer({ storage: storage });
 
 // Route pour rendre la vidéo
-app.post('/render', (req, res) => {
+app.post('/render', upload.single('image'), (req, res) => {
     console.log('Received request body:', req.body);
 
-    const base64Image = req.body.image;
+    const imageFile = req.file;
     const width = req.body.width;
     const height = req.body.height;
 
-    if (!base64Image || !width || !height) {
+    if (!imageFile || !width || !height) {
         return res.status(400).send('Invalid data provided.');
     }
 
-    console.log('Base64 Image (first 50 chars):', base64Image.substring(0, 50));
+    console.log('Image path:', imageFile.path);
     console.log('Width:', width);
     console.log('Height:', height);
 
-    const imagePath = 'temp-image.png';
-
-    // Convertir base64 en fichier
-    base64ToFile(base64Image, imagePath);
-
     // Commande FFmpeg avec redimensionnement et rotation
     const command = `
-    ffmpeg -y -i ${imagePath} -vf "scale=${width}:${height}, rotate=PI/2*t:ow=rotw(PI/2*t):oh=roth(PI/2*t), fps=30" -t 5 -pix_fmt yuv420p output.mp4`;
+    ffmpeg -y -i ${imageFile.path} -vf "scale=${width}:${height}, rotate=PI/2*t:ow=rotw(PI/2*t):oh=roth(PI/2*t), fps=30" -t 5 -pix_fmt yuv420p output.mp4`;
 
     exec(command, (error, stdout, stderr) => {
         if (error) {
@@ -49,7 +50,7 @@ app.post('/render', (req, res) => {
         }
 
         res.download('output.mp4', () => {
-            fs.unlinkSync(imagePath); // Supprimer l'image temporaire après rendu
+            fs.unlinkSync(imageFile.path); // Supprimer l'image temporaire après rendu
         });
     });
 });
