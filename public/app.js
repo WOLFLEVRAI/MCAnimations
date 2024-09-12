@@ -3,20 +3,21 @@ const imageUpload = document.getElementById('imageUpload');
 const previewDiv = document.getElementById('preview');
 const widthSlider = document.getElementById('widthSlider');
 const heightSlider = document.getElementById('heightSlider');
-let base64Image;
+let uploadedFile;
 
 // Fonction pour charger et afficher l'image
 imageUpload.addEventListener('change', function () {
     const file = this.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function (e) {
-        base64Image = e.target.result; // Convertir l'image en base64
-        previewDiv.innerHTML = `<img id="animatedImage" src="${base64Image}" alt="Selected Image">`;
-        updateImageSize();  // Mettre à jour la taille en fonction des sliders
-    };
-    
+    uploadedFile = file;
+
     if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function (e) {
+            previewDiv.innerHTML = `<img id="animatedImage" src="${e.target.result}" alt="Selected Image">`;
+            updateImageSize();  // Mettre à jour la taille en fonction des sliders
+        };
+        
         reader.readAsDataURL(file);
     }
 });
@@ -34,25 +35,15 @@ function updateImageSize() {
 widthSlider.addEventListener('input', updateImageSize);
 heightSlider.addEventListener('input', updateImageSize);
 
-// Bouton pour lancer la prévisualisation de l'animation
-document.getElementById('previewBtn').addEventListener('click', function () {
-    const image = document.getElementById('animatedImage');
-    if (image) {
-        image.classList.remove('rotate-bounce'); // Réinitialise l'animation
-        void image.offsetWidth; // Force un reflow pour que l'animation redémarre
-        image.classList.add('rotate-bounce'); // Ajoute l'animation
-    }
-});
-
 // Bouton pour rendre la vidéo avec l'image et la taille choisie
 document.getElementById('renderBtn').addEventListener('click', function () {
-    if (!base64Image) {
+    if (!uploadedFile) {
         alert('Please upload an image before rendering.');
         return;
     }
 
     const formData = new FormData();
-    formData.append('image', base64Image); // Ajouter l'image en base64
+    formData.append('image', uploadedFile); // Ajouter le fichier image
     formData.append('width', widthSlider.value);
     formData.append('height', heightSlider.value);
 
